@@ -1,0 +1,38 @@
+geekforgeeks bfs https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/
+busqueda en anchura con pseudocódigo https://es.wikipedia.org/wiki/B%C3%BAsqueda_en_anchura
+grafos en computer science http://web.cecs.pdx.edu/~sheard/course/Cs163/Doc/Graphs.html
+https://www.youtube.com/watch?v=_gsXXfWotFY&ab_channel=Agust%C3%ADnValverdeRamos -> la busqueda en anchura lo que hace es que me genera un arbol generador
+https://es.wikipedia.org/wiki/Teor%C3%ADa_de_grafos 
+
+ATENCION YA LO PILLE CREO LO QUE BUSCO NO ES EL CAMINO MÍNIMO LO QUE QUIERO ES UN CAMINO A SECAS
+https://stackoverflow.com/questions/30409493/using-bfs-for-weighted-graphs
+AQUÍ TE LO EXPLICA NO PUEDES USAR BFS PARA HAYAR EL CAMINO MÍNIMO EN UN WEIGHTED GRAPH
+ACTUALIZACIÓN DE LO DE ARRIBA: 
+ya no se si hay que hacer la busqueda bfs o la de costo uniforme (transparencia 42 busquedas no informadas)
+ACTUALIZACIÓN DE NUEVO:
+Voy a hacer el bfs normal (https://www.youtube.com/watch?v=oDqjPvD54Ss&ab_channel=WilliamFiset) y ya pregunto si era ese o el de costo uniforme
+
+-Dado un vértice fuente s, Breadth-first search sistemáticamente explora los vértices de G para “descubrir” todos los vértices alcanzables desde s.
+-Calcula la distancia (menor número de vértices) desde s a todos los vértices alcanzables.
+-Después produce un árbol BF con raíz en s y que contiene a todos los vértices alcanzables.
+-El camino desde s a cada vértice en este recorrido contiene el mínimo número de vértices. Es el camino más corto medido en número de vértices.
+-Su nombre se debe a que expande uniformemente la frontera entre lo descubierto y lo no descubierto. 
+ Llega a los nodos de distancia k, sólo tras haber llegado a todos los nodos a distancia k-1.
+
+Tu puedes poner cualquier nodo como inicial de la busqueda en anchura (creo)
+
+En el fichero de entrada los primeros n - 1 arcos son del "primer nodo" con el resto y para el resto
+de nodos cada vez es 1 línea menos EJEMPLO:
+5 /* número de vértices
+1.225 /* d(1, 2) = d(2, 1) -------------------------------PRIMERAS 5 - 1 = 4 filas nodo 1 con el resto
+1.000 /* d(1, 3) = d(3, 1)
+−1 /* d(1, 4) = d(4, 1)
+−1 /* d(1, 5) = d(5, 1) ----------------------------------- 
+−1 /* d(2, 3) = d(3, 2) ----------------------------------4 -1 = 3 filas
+−1 /* d(2, 4) = d(4, 2)
+2.236 /* d(2, 5) = d(5, 2) -------------------------------- 
+1.000 /* d(3, 4) = d(4, 1) ------------------------------------ 3 - 1 = 2 filas
+−1 /* d(3, 5) = d(5, 3) ------------------------- 
+−1 /* d(4, 5) = d(5, 4) ---------------------- 2 - 1 = 1 fila
+
+Dentro del programa (no del fichero de configuración) elegir los nodos entre los que quiero hayar el camino
