@@ -2,6 +2,7 @@
 #include <iostream>
 #include <queue>
 #include <vector>
+#include <algorithm> //std::reverse
 
 
 //grafo de wikipedia camino minimo entre 1 y 11 es [1, 4, 7, 11]
@@ -39,8 +40,16 @@ std::vector<int> previo(std::vector< std::vector<int> > grafo, int nodoi, int nu
 }
 
 std::vector<int> hallarcamino(int nodoi, int nodof, std::vector<int> prev) {
-  
+  std::vector<int> camino;
+  for(int i = nodof; i != -1; i = prev[i - 1]) {
+    camino.push_back(i);
+  }
 
+  std::reverse(camino.begin(), camino.end());
+  
+  if (camino[0] == nodoi)
+    return camino;
+  return {};
 }
 
 /*
@@ -66,6 +75,7 @@ int main() {
   };
 
   std::vector<int> x = previo(graph, 1, 12);
+  x = hallarcamino(1, 11, x);
   for(int i : x) {
     std::cout << i << " ";
   }
