@@ -7,12 +7,16 @@
 #include <cstdlib> //std::exit()
 
 
+double INFINITO = 10000000;
+
 //grafo de wikipedia camino minimo entre 1 y 11 es [1, 4, 7, 11]
 
 struct arista {
   int nododestino;
   double coste;
-  
+  friend bool operator<(const arista& x, const arista& y) {
+    return y.coste < x.coste;
+  }
 };
 
 int kNnodos;
@@ -74,7 +78,7 @@ std::vector<std::vector<arista> > creargrafo() {
   }
 
   std::cout << "El número de nodos es " << nnodos << std::endl << std::endl << "Lista de adyacencia: " << std::endl;
-
+ 
   for(auto x : grafo) {
     for(arista y: x) {
       std::cout << y.nododestino << " " << y.coste << "|";
@@ -86,61 +90,60 @@ std::vector<std::vector<arista> > creargrafo() {
   
 }
 
+
 //HAY QUE COMPROBAR QUE ESTO FUNCIONA PERO PRIMERO TENGO QUE HACER PARA LEER FICHERO Y OBTENER EL grafo
-std::vector<arista> previo(std::vector< std::vector<arista> > grafo, int nodoi, int numnodos) {
-  std::queue<int> cola;
-  cola.push(nodoi);
+std::vector<arista> previo(std::vector< std::vector<arista> > grafo, int nodoi, int nfinal, int numnodos) {
+  
+  
 
-  std::vector<arista> prev;
-  //prev.resize(numnodos, -1);
-  arista dummy = {-1 , 0};
-  for(int i = 0; i < numnodos; i++)  {
-    prev.push_back(dummy);
-  }
-
-
+  std::vector<arista> previoycost;
+  previoycost.resize(numnodos, {-1, INFINITO});
   std::vector<bool> visitados;
-  visitados.resize(numnodos, false);
-  visitados[nodoi - 1] = true;
-
-  int nodovisitado;
+  visitados.resize(numnodos, 0);
+  
+  std::priority_queue<arista> cola;
+  cola.push({nodoi, 0});
+  previoycost[nodoi - 1].coste = 0;
+  
   std::vector<arista> vecinos;
-  while (!cola.empty()) {
-    vecinos.erase(vecinos.begin(), vecinos.end());
-    nodovisitado = cola.front();
+  arista nactual;
+  double costecamino;
+  while(!cola.empty()) {
+    
+    nactual = cola.top();
     cola.pop();
 
-    vecinos = grafo[nodovisitado - 1];
+    std::cout << "visitando nodo " <<  nactual.nododestino << std::endl;
 
-    for(arista n : vecinos) {
-      if( !visitados[n.nododestino - 1] ) {
-        cola.push(n.nododestino);
-        visitados[n.nododestino - 1] = true;
-        prev[n.nododestino - 1].nododestino = nodovisitado;
-        prev[n.nododestino - 1].coste = n.coste; 
-      }
+    if(nactual.nododestino == nfinal) return previoycost;
+    
+    vecinos = grafo[nactual.nododestino - 1];
+    for(int i = nactual.nododestino; i != -1; i = previoycost[i - 1].nododestino) {
+      visitados[i - 1] = true; 
     }
 
+    costecamino = previoycost[nactual.nododestino - 1].coste;
+
+    for(arista vecino : vecinos) {
+      if(!visitados[vecino.nododestino - 1]) { //que no se haya visitado en el camino
+        cola.push({vecino.nododestino, vecino.coste + costecamino});
+        if(previoycost[vecino.nododestino - 1].coste > vecino.coste) {  //meter en prev solo el de menor coste
+          previoycost[vecino.nododestino - 1] = {nactual.nododestino, costecamino + vecino.coste};
+        }
+      }
+
+    }
+
+    visitados.resize(numnodos, 0);
   }
-  
-  return prev;
+
+  return previoycost;
+
 }
 
-std::vector<int> hallarcamino(int nodoi, int nodof, std::vector<arista> prev) {
-  float costecamino = 0;
-  std::vector<int> camino;
-  for(int i = nodof; i != -1; i = prev[i - 1].nododestino) {
-    camino.push_back(i);
-    costecamino += prev[i - 1].coste;
-  }
 
-  std::reverse(camino.begin(), camino.end());
-  
-  if (camino[0] == nodoi)
-    std::cout << "El coste del camino es: " << costecamino << std::endl;
-    return camino;
-  return {};
-}
+
+
 
 /*
 COSAS QUE SE ME VAN OCURRIENDO:
@@ -150,14 +153,11 @@ CASI RESUELTO (PREGUNTAR SI NOS VAN A PEDIR NODO PRIMERO = 1): POR LA FORMA EN L
 */
 
 int main() {
-
   std::cout << "Programa de busqueda del camino entre dos grafos" << std::endl;
   int opcion = -1, instacia = 1;
   std::ofstream ficherosalida("salida.txt");
-  ficherosalida << "Instancia |  n  |  m  |  v0  |  v1  |  Camino  |  Distancia  |  Nodos generados  |  Nodos inspeccionados  |\n";
+  //ficherosalida << "Instancia |  n  |  m  |  v0  |  v1  |  Camino  |  Distancia  |  Nodos generados  |  Nodos inspeccionados  |\n";
   while(opcion != 0) {
-
-    ficherosalida << "ID" << instacia << "  |  ";
 
     std::vector< std::vector<arista> > graph = creargrafo();
 
@@ -165,18 +165,26 @@ int main() {
     std::cout << "Escribe el nodo inicial de la búsqueda: "; std::cin >> ninicial;
     std::cout << "Escribe el nodo final de la búsqueda: "; std::cin >> nfinal;
 
-    std::vector<arista> x = previo(graph, ninicial, kNnodos);
-    std::vector<int> camino = hallarcamino(ninicial, nfinal, x);
+    std::vector<arista> pr = previo(graph, ninicial, nfinal, kNnodos);
+    std::cout << "predecesores" << std::endl;
 
-    std::cout << "El camino es: ";
-    for(int i : camino) {
+    
+    for(arista x : pr) {
+      std::cout << x.nododestino << "," << x.coste <<" - ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "camino (al reves) con coste " << pr[nfinal - 1].coste << std::endl;
+    for(int i = nfinal; i != -1; i = pr[i - 1].nododestino) {
       std::cout << i << " ";
     }
     std::cout << std::endl;
 
+
+
     std::cout << "Si quieres salir del programa escribe 0, si no escribe 1... "; std::cin >> opcion;
     instacia++;
-    ficherosalida << "\n";
+    
   }
   std::cout << "saliendo..." << std::endl;
   ficherosalida.close();

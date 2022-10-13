@@ -1,3 +1,24 @@
+OLVIDARME DE TODO LO QUE SE, ME EQUIVOQUE DE ALGORITMO EL QUE TENGO QUE HACER ES EL UNIFORM COST SEARCH
+
+https://cplusplus.com/reference/queue/priority_queue/
+La priority_queue siempre saca el nodo con menor coste
+nodo inspeccionado si es el final o si generas los hijos
+nodos generados los que han entrado en la cola
+¿¿una estructura para guardar el arbol que genera la búsqueda???
+en un mismo camino no puede estar dos veces el mismo nodo (bucle)
+
+en vez de ser un vector prev una matriz donde la fila sea el nodo y la columna sus distintos padres y coste
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+
 geekforgeeks bfs https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/
 busqueda en anchura con pseudocódigo https://es.wikipedia.org/wiki/B%C3%BAsqueda_en_anchura
 grafos en computer science http://web.cecs.pdx.edu/~sheard/course/Cs163/Doc/Graphs.html
