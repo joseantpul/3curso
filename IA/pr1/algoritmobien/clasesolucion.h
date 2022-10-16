@@ -4,6 +4,7 @@
 #include <algorithm> //std::reverse
 #include <fstream>
 #include <cstdlib> //std::exit()
+#include <string>
 #include "clasenodo.h"
 
 
@@ -18,7 +19,7 @@ struct arista {
 
 class maquinadebusquedas{
  public:
-  maquinadebusquedas() {}
+  maquinadebusquedas() {instancia = 0; nodosgenerados = 0; nodosvisitados = 0; naristas = 0;}
   void creargrafo();
   void pediriniciales();
   void costouniforme();
@@ -27,11 +28,13 @@ class maquinadebusquedas{
  private:
   int nodosgenerados;
   int nodosvisitados;
-  int nvertices;
   int naristas;
   int nodoi;
   int nodof;
   int nnodos;
+  int instancia;
+  bool caminoencontrado;
+  std::ofstream ficherosalida;
   std::vector<std::vector<arista> > grafo;
   nodo* nodofinalbusqueda; //nodo final de la búsqueda, desde el se hace el recorrido hacia atrás
 

@@ -41,6 +41,7 @@ void maquinadebusquedas::creargrafo() {
         //std::cout << dummy.nododestino << " " << dummy.coste << std::endl;
         
         if(coste != -1) {
+          naristas++;
           this->grafo[pivote - 1].push_back(dummy);
           dummy2 = {pivote, dummy.coste};
           this->grafo[dummy.nododestino - 1].push_back(dummy2);
@@ -85,6 +86,7 @@ void maquinadebusquedas::costouniforme() {
   
   std::priority_queue<nodo*, std::vector<nodo* >, CompararNodos > cola;
   cola.push(new nodo(nullptr, nodoi, 0));
+  nodosgenerados++;
   
   std::vector<arista> vecinos;
   nodo* nactual = nullptr;
@@ -96,11 +98,13 @@ void maquinadebusquedas::costouniforme() {
 
     nactual = cola.top();
     cola.pop();
+    nodosvisitados++;
 
-    std::cout << "visitando nodo " <<  nactual->getindice() << std::endl;
+    //std::cout << "visitando nodo " <<  nactual->getindice() << std::endl;
 
     if(nactual->getindice() == this->nodof) {
       nodofinalbusqueda = nactual;
+      caminoencontrado = true;
       return;
     }
     
@@ -115,25 +119,42 @@ void maquinadebusquedas::costouniforme() {
 
     for(arista vecino : vecinos) {
       if(!visitados[vecino.nododestino - 1]) { //que no se haya visitado en el camino
+        nodosgenerados++;
         cola.push(new nodo(nactual, vecino.nododestino, vecino.coste + costecamino));
       }
     }
     visitados.clear();
     visitados.resize(nnodos, 0);
   }
-
+  caminoencontrado = false;
   return;  //esto esta mal falta algo
 }
 
 void maquinadebusquedas::mostrarcamino() {
-
-  std::cout << "Camino al reves con coste " << nodofinalbusqueda->getcoste() << std::endl;
-  while(true) {
-    std::cout << nodofinalbusqueda->getindice() << " ";
-    if(nodofinalbusqueda->getpadre() == nullptr) break;
-    nodofinalbusqueda = nodofinalbusqueda->getpadre();
+  if(caminoencontrado) {
+    if(instancia == 0) {
+      ficherosalida.open("salida.txt");
+      ficherosalida << "Instancia |  n  |  m  |  v0  |  v1  |  Camino  |  Distancia  |  Nodos generados  |  Nodos inspeccionados  |\n";
+    }
+    ficherosalida << "ID" << instancia << " | " << nnodos << " | " << naristas << " | " << nodoi << " | " << nodof << " | ";
+    std::vector<int> camino;
+    double cc = nodofinalbusqueda->getcoste();
+    while(true) {
+      camino.push_back(nodofinalbusqueda->getindice());
+      if(nodofinalbusqueda->getpadre() == nullptr) break;
+      nodofinalbusqueda = nodofinalbusqueda->getpadre();
+    }
+    std::reverse(camino.begin(), camino.end());
+    for(int x : camino) {
+      ficherosalida << x << "->";
+    }
+    ficherosalida << " | " << cc  << " | " << nodosgenerados << " | " << nodosvisitados << "\n";
+    
+    instancia++;
   }
-
-  
+  else {
+    std::cout << "Camino no encontrado" << std::endl;
+  }
+  return ;
 
 }
